@@ -1,4 +1,7 @@
-output "aws_iam_role_arn" {
-  description = "AWS role ARN"
-  value       = module.instance_profile.aws_iam_role_arn
+output "aws_parameters" {
+  description = "aws parameters (ExternalId and IntegrationName)"
+  value       =  {
+    integrationName = var.integration_name
+    ExternalId = var.external_id
+  }
 }

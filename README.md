@@ -1,7 +1,7 @@
 # Terraform AWS IAM role module
 
-- This module allows you to create AWS IAM role with required policies and return role ARN which can be used for Uptycs service integration for each account in an organization or the accounts those have uptycs tags.
-- This terraform module will create a IAM Role in each account with the following policies attached:
+- This module allows you to integrate AWS master account and any child account with Uptycs.
+- This module will create an IAM Role in each account. The role has following policies attached:
   - policy/job-function/ViewOnlyAccess
   - policy/SecurityAudit
   - Custom read only policy access for required resources
@@ -13,7 +13,7 @@ locals {
   # Provide the directory for the creation of modules and providers for all accounts 
   filepath = ""
   # Provide the string to prefix the resources
-  resource_prefix = "cloudquery"
+  integration_name = "cloudquery"
   # Copy the AWS Account ID from Uptycs' UI
   # Uptycs' UI : "Cloud"->"AWS"->"Integrations"->"ACCOUNT INTEGRATION"
   upt_account_id = "12345678910"
@@ -77,7 +77,7 @@ module "iam-config-${ac.id}" {
   upt_account_id = "${local.upt_account_id}"
   aws_account_id = "${ac.id}"
   external_id = "${local.external_id}"
-  resource_prefix = "${local.resource_prefix}"
+  integration_name = "${local.integration_name}"
   
   tags = {
     Service = "cloudquery"
@@ -92,7 +92,7 @@ module "iam-config-${data.aws_organizations_organization.listaccounts.master_acc
   upt_account_id = "${local.upt_account_id}"
   aws_account_id = "${data.aws_organizations_organization.listaccounts.master_account_id}"
   external_id = "${local.external_id}"
-  resource_prefix = "${local.resource_prefix}"
+  integration_name = "${local.integration_name}"
   cloudtrail_s3_bucket_name = "${local.cloudtrail_s3_bucket_name}"
   kinesis_stream_name = "${local.kinesis_stream_name}"
   vpc_flowlogs_bucket_name = "${local.vpc_flowlogs_bucket_name}"
@@ -106,16 +106,9 @@ EOT
 resource "local_file" "outputs" {
   filename = "${local.filepath}/outputs.tf"
   content = <<EOT
-  %{ for ac in data.aws_organizations_organization.listaccounts.non_master_accounts ~}
-  %{ if ac.status == "ACTIVE" ~}
-  %{ if !contains(local.uptycstaglist, "integration") || local.uptycstagmap["${ac.id}"] == "integration" ~}
-
-output "aws-iam-role-arn-${ac.id}" {
-  value = module.iam-config-${ac.id}.aws_iam_role_arn
+output "aws_parameters" {
+  value = module.iam-config-${data.aws_organizations_organization.listaccounts.master_account_id}.aws_parameters
 }
-%{ endif ~}
-%{ endif ~}
-%{ endfor ~}
 EOT
 }
 ```
@@ -148,7 +141,7 @@ After step 4, roles and policies will be created in each account and will get th
 
 | Name                      | Description                                                                                            | Type     | Default      |  Required |
 | ------------------------- | ------------------------------------------------------------------------------------------------------ | -------- | ------------ | ----------|
-| resource_prefix           | Prefix to be used for naming new resources                                                             | `string` | `cloudquery` |           |
+| integration_name           | Prefix to be used for naming new resources                                                             | `string` | `cloudquery` |           |
 | upt_account_id            | Uptycs AWS account ID                                                                                  | `string` | `""`         |    Yes    |
 | external_id               | Role external ID provided by Uptycs                                                                    | `string` | `""`         |    Yes    |
 | vpc_flowlogs_bucket_name  | Name of the S3 bucket that contains the VPC flow logs                                                  | `string` | `""`         |           |
@@ -160,7 +153,7 @@ After step 4, roles and policies will be created in each account and will get th
 
 | Name             | Description      |
 | ---------------- | ---------------- |
-| aws_iam_role_arn | AWS IAM role ARN |
+| aws_parameters | AWS parameters (ExternalId and IntegrationName) |
 
 ## Notes:-
 
@@ -171,4 +164,3 @@ After step 4, roles and policies will be created in each account and will get th
     export AWS_PROFILE="< profile name >"
   ```
 
-   

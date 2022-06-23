@@ -1,4 +1,4 @@
-variable "resource_prefix" {
+variable "integration_name" {
   description = "Prefix to be used for naming new resources"
   type        = string
   default     = "cloudquery"
@@ -13,7 +13,6 @@ variable "upt_account_id" {
   description = "Uptycs AWS account ID"
   type        = string
 }
-
 
 variable "external_id" {
   description = "Role external ID provided by Uptycs"
