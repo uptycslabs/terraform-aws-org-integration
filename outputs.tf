@@ -5,3 +5,13 @@ output "aws_parameters" {
     ExternalId = var.external_id
   }
 }
+
+output "master_role" {
+  description = "role in master account"
+  value = aws_iam_role.role.arn
+}
+
+output "child_roles" {
+  description = "roles in child accounts"
+  value = uptycscspm_role.gb
+}
