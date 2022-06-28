@@ -3,9 +3,7 @@ data "aws_organizations_organization" "my_org" {
 }
 
 locals {
-  //child_accounts_active     = toset([for each in data.aws_organizations_organization.my_org.non_master_accounts : each.id if each.status == "ACTIVE"])
-  child_accounts_active     = toset(["384945265514", "031681993570", "056771311234", "093136074091", "154183295693", "241033863276", "675326774713"])
-  //child_accounts_bad      = toset(["219798373743", "988562915291", "106964015862"])
+  child_accounts_active     = toset([for each in data.aws_organizations_organization.my_org.non_master_accounts : each.id if each.status == "ACTIVE"])
 }
 
 resource "uptycscspm_role" "gb" {
