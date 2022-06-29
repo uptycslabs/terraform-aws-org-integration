@@ -57,8 +57,7 @@ output "aws_parameters" {
 | external_id               | Role external ID provided by Uptycs                             | `string` | `""`                | Yes      |
 | vpc_flowlogs_bucket_name  | Name of the S3 bucket that contains the VPC flow logs           | `string` | `""`                |          |
 | cloudtrail_s3_bucket_name | Name of the S3 bucket which contains the CloudTrail data        | `string` | `""`                |          |
-| kinesis_stream_name       | Name of the Kinesis stream configured to stream CloudTrail data | `string` | `""`                |          |
-| tags                      | Tags to apply to the resources created by this module           | `map`    | `{}                 |          |
+| kinesis_stream_name       | Name of the Kinesis stream configured to stream CloudTrail data | `string` | `""`                |          |              |          |
 
 ## 2. Set Profile and Region before execute terraform
 
