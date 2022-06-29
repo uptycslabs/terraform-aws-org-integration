@@ -55,9 +55,9 @@ output "aws_parameters" {
 | upt_account_id            | Uptycs AWS account ID                                           | `string` | `""`                | Yes      |
 | aws_account_id            | AWS organization's master account ID                            | `string` | `""`                | Yes      |
 | external_id               | Role external ID provided by Uptycs                             | `string` | `""`                | Yes      |
-| vpc_flowlogs_bucket_name  | Name of the S3 bucket that contains the VPC flow logs           | `string` | `""`                |          |
-| cloudtrail_s3_bucket_name | Name of the S3 bucket which contains the CloudTrail data        | `string` | `""`                |          |
-| kinesis_stream_name       | Name of the Kinesis stream configured to stream CloudTrail data | `string` | `""`                |          |              |          |
+| vpc_flowlogs_bucket_name  | Name of the S3 bucket in master account that contains the VPC flow logs           | `string` | `""`                |          |
+| cloudtrail_s3_bucket_name | Name of the S3 bucket in master account which contains the CloudTrail data        | `string` | `""`                |          |
+| kinesis_stream_name       | Name of the Kinesis stream in master account configured to stream CloudTrail data | `string` | `""`                |          |              |          |
 
 ## 2. Set Profile and Region before execute terraform
 
