@@ -41,7 +41,7 @@ module "org-config" {
 }
 
 output "aws_parameters" {
-  value = module.iam-config.aws_parameters
+  value = module.org-config.aws_parameters
 }
 
 ```
