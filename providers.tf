@@ -6,8 +6,8 @@ terraform {
       version = ">= 3.50.0"
     }
     uptycscspm = {
-      source  = "github.com/uptycslabs/uptycscspm"
-      version = "0.0.1"
+      source = "uptycslabs/uptycscspm"
+      version = "0.0.5"
     }
   }
 }

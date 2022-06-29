@@ -1,11 +1,11 @@
 variable "integration_name" {
   description = "Prefix to be used for naming new resources"
   type        = string
-  default     = "cloudquery"
+  default     = "UptycsIntegration"
 }
 
 variable "aws_account_id" {
-  description = "AWS account ID"
+  description = "AWS organization's master account ID"
   type        = string
 }
 

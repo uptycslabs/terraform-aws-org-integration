@@ -6,7 +6,7 @@ locals {
   child_accounts_active     = toset([for each in data.aws_organizations_organization.my_org.non_master_accounts : each.id if each.status == "ACTIVE"])
 }
 
-resource "uptycscspm_role" "gb" {
+resource "uptycscspm_role" "child_account_role" {
   for_each = local.child_accounts_active
   account_id = each.key
   integration_name = var.integration_name
