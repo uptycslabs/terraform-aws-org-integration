@@ -49,15 +49,15 @@ output "aws_parameters" {
 ## Inputs
 
 
-| Name                      | Description                                                     | Type     | Default             | Required |
-| --------------------------- | ----------------------------------------------------------------- | ---------- | --------------------- | ---------- |
-| integration_name          | Prefix to be used for naming new resources                      | `string` | `UptycsIntegration` |          |
-| upt_account_id            | Uptycs AWS account ID                                           | `string` | `""`                | Yes      |
-| aws_account_id            | AWS organization's master account ID                            | `string` | `""`                | Yes      |
-| external_id               | Role external ID provided by Uptycs                             | `string` | `""`                | Yes      |
+| Name                      | Description                                                                       | Type     | Default             | Required |
+| --------------------------- | ----------------------------------------------------------------------------------- | ------------- | ------------------ | --------- |
+| integration_name          | Prefix to be used for naming new resources                                        | `string` | `UptycsIntegration` |          |
+| upt_account_id            | Uptycs AWS account ID                                                             | `string` | `""`                | Yes      |
+| aws_account_id            | AWS organization's master account ID                                              | `string` | `""`                | Yes      |
+| external_id               | Role external ID provided by Uptycs                                               | `string` | `""`                | Yes      |
 | vpc_flowlogs_bucket_name  | Name of the S3 bucket in master account that contains the VPC flow logs           | `string` | `""`                |          |
 | cloudtrail_s3_bucket_name | Name of the S3 bucket in master account which contains the CloudTrail data        | `string` | `""`                |          |
-| kinesis_stream_name       | Name of the Kinesis stream in master account configured to stream CloudTrail data | `string` | `""`                |          |              |          |
+| kinesis_stream_name       | Name of the Kinesis stream in master account configured to stream CloudTrail data | `string` | `""`                |          |
 
 ## 2. Set Profile and Region before execute terraform
 
@@ -78,16 +78,16 @@ Notes:-
 
 - The user should have `Administrators`  permission to the master account to create resources.
 - Every child account in the organization shoud have `OrganizationAccountAccessRole` role.
+- If you want to integrate some specific accounts, set those accounts  with the tag (Key=`uptycs-integration` Value = `Any value`)
 - If you see this error you need to add the missing role `OrganizationAccountAccessRole` on the child account. For more information visit: [https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html]
 
 ```
 Unable to create uptycscspm role. err=operation error IAM: CreateRole, failed to sign request: failed to retrieve credentials: failed to refresh cached credentials, operation error STS: AssumeRole, https response error StatusCode: 403, RequestID: 262297b8-c6e5-4dec-b1ec-3fcaa7e8e6da, api error AccessDenied: User: arn:aws:iam::<masterAccountId>:user/<user> is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::<childAccountId>:role/OrganizationAccountAccessRole
 ```
+
 ## Outputs
 
 
 | Name           | Description                                     |
 | ---------------- | ------------------------------------------------- |
 | aws_parameters | AWS parameters (ExternalId and IntegrationName) |
-
-##
