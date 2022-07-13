@@ -6,29 +6,30 @@
   - policy/SecurityAudit
   - Custom read only policy access for required resources
 
-## 1. Create a <file.tf> file, paste below codes and modify as needed.
+## 1. Copy and paste the following configuration into a .tf file (ex: main.tf) and modify the values as required
 
 ```
 module "org-config" {
   source           = "github.com/uptycslabs/terraform-aws-org-integration"
 
-  # Modify as you need, this will be used as a prefix to naming the resources
+  # Modify as you need, this will be used to name the resources
   integration_name = "UptycsIntegration-123"
 
-  # Copy the AWS Account ID from Uptycs' UI
-  # Uptycs' UI : "Cloud"->"AWS"->"Integrations"->"Org INTEGRATION"
+  # Copy Uptycs' AWS Account ID into 'upt_account_id'
+  # Browse to the following page in Uptycs's UI and Look for "Uptycs Account ID" at the top right corner 
+  # Uptycs' UI: "Cloud"->"AWS"->"Integrations"->"ORG INTEGRATION"
   upt_account_id = "<upt_account_id>"
 
-  # Account Id of the organizattion's master account
+  # Organization's master account ID 
   aws_account_id = "<aws_account_id>"
 
-  # Copy the UUID4 from Uptycs' UI
-  # Uptycs' UI : "Cloud"->"AWS"->"Integrations"->"Org INTEGRATION"
-  # You can generate your own UUID. If you do, make sure Uptycs' UI is updated with it
-  external_id = "465308b9-fadb-449b-8d2d-3b5b3f2457f9"
+  # You can generate your own UUID.
+  # You can copy auto generated uuid from Uptycs' UI
+  external_id = "<uuid4>"
 
-  # CloudTrail source of master account: S3 Bucket or Kinesis stream?
-  # Set either `cloudtrail_s3_bucket_name` or `kinesis_stream_name` to allow Uptycs to ingest CloudTrail events
+  # Following bucket and stream configurations are optional
+  # Inorder to ingest organization CloudTrail logs you need to set either `cloudtrail_s3_bucket_name` or `kinesis_stream_name`
+
   # Provide the S3 bucket name which contains the CloudTrail data
   cloudtrail_s3_bucket_name = ""
 
@@ -48,16 +49,15 @@ output "aws_parameters" {
 
 ## Inputs
 
-
 | Name                      | Description                                                     | Type     | Default             | Required |
 | --------------------------- | ----------------------------------------------------------------- | ---------- | --------------------- | ---------- |
 | integration_name          | Prefix to be used for naming new resources                      | `string` | `UptycsIntegration` |          |
 | upt_account_id            | Uptycs AWS account ID                                           | `string` | `""`                | Yes      |
 | aws_account_id            | AWS organization's master account ID                            | `string` | `""`                | Yes      |
-| external_id               | Role external ID provided by Uptycs                             | `string` | `""`                | Yes      |
-| vpc_flowlogs_bucket_name  | Name of the S3 bucket in master account that contains the VPC flow logs           | `string` | `""`                |          |
-| cloudtrail_s3_bucket_name | Name of the S3 bucket in master account which contains the CloudTrail data        | `string` | `""`                |          |
-| kinesis_stream_name       | Name of the Kinesis stream in master account configured to stream CloudTrail data | `string` | `""`                |          |              |          |
+| external_id               | External ID                                                     | `uuid4`  | `""`                | Yes      |
+| vpc_flowlogs_bucket_name  | Name of the S3 bucket in master for VPC flow logs               | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_name | Name of the organization cloud trail S3 bucket                  | `string` | `""`                | Optional |
+| kinesis_stream_name       | Name of the organization Kinesis stream                         | `string` | `""`                | Optional |
 
 ## 2. Set Profile and Region before execute terraform
 
@@ -84,7 +84,6 @@ Notes:-
 Unable to create uptycscspm role. err=operation error IAM: CreateRole, failed to sign request: failed to retrieve credentials: failed to refresh cached credentials, operation error STS: AssumeRole, https response error StatusCode: 403, RequestID: 262297b8-c6e5-4dec-b1ec-3fcaa7e8e6da, api error AccessDenied: User: arn:aws:iam::<masterAccountId>:user/<user> is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::<childAccountId>:role/OrganizationAccountAccessRole
 ```
 ## Outputs
-
 
 | Name           | Description                                     |
 | ---------------- | ------------------------------------------------- |
