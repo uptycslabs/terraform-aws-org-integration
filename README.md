@@ -75,7 +75,7 @@ $ terraform apply
 ```
 
 Notes:-
-
+- Requires Terraform version >= 1.2.0 
 - The user should have `Administrators`  permission to the master account to create resources.
 - Every child account in the organization shoud have `OrganizationAccountAccessRole` role.
 - If you see this error you need to add the missing role `OrganizationAccountAccessRole` on the child account. For more information visit: [https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html]
