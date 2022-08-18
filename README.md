@@ -73,6 +73,7 @@ $ terraform init
 $ terraform plan
 $ terraform apply
 ```
+Navigate back to Uptycs Organizations Integration page to complete the integration process.
 
 Notes:-
 - Requires Terraform version >= 1.2.0 
