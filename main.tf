@@ -31,6 +31,7 @@ resource "aws_iam_role" "role" {
         {
           Action   = [
               "apigateway:GET",
+	      "codebuild:BatchGetProjects",
               "codebuild:ListProjects",
               "codecommit:GetBranch",
               "codecommit:GetCommit",
