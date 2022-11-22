@@ -1,0 +1,15 @@
+{
+  "name": "uptycs-role-manager",
+  "version": "1.0.0",
+  "description": "Uptycs Integration role manager",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint '**/*.js' --ignore-path .gitignore"
+  },
+  "author": "Gopal B",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-iam": "^3.213.0",
+    "@aws-sdk/client-sts": "^3.213.0"
+  }
+}

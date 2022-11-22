@@ -216,3 +216,29 @@ EOF
 
   tags = var.tags
 }
+
+# Allow the role to send SQS message to trigger child read-only role in child accounts
+resource "aws_iam_policy" "send_message" {
+  name        = "${var.integration_name}-sqsSendMessage"
+  description = "Allow send message to SQS"
+  policy      = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [ "sqs:SendMessage" ],
+            "Resource": [ "${aws_sqs_queue.request_queue.arn}" ]
+        }
+    ]
+}
+EOF
+
+  tags = var.tags
+}
+
+# Attach SQS Send Message Policy to the Role
+resource "aws_iam_role_policy_attachment" "sqs_policy_attach" {
+  role       = aws_iam_role.role.name
+  policy_arn = aws_iam_policy.send_message.arn
+}
