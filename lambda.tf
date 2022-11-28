@@ -35,6 +35,7 @@ resource "aws_cloudwatch_log_group" "function_log_group" {
 # Function policy
 resource "aws_iam_policy" "function_policy" {
   name   = "${var.integration_name}-function-policy"
+
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -57,7 +58,16 @@ resource "aws_iam_policy" "function_policy" {
       },
       {
         Action : [
-          "kms:decrypt"
+          "sqs:SendMessage",
+          "sqs:GetQueueAttributes"
+        ],
+        Effect : "Allow",
+        Resource : aws_sqs_queue.response_queue.arn
+      },
+      {
+        Action : [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
         ],
         Effect : "Allow",
         Resource : "*"
@@ -75,7 +85,7 @@ resource "aws_iam_policy" "function_policy" {
 }
 
 # Attach policy to the role
-resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "function_policy_attachment" {
   role = aws_iam_role.iam_for_lambda.id
   policy_arn = aws_iam_policy.function_policy.arn
 }

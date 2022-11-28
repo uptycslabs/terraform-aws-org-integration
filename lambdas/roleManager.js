@@ -30,13 +30,24 @@ module.exports.handler = async (event, context, callback) => {
     }
     req.lambdaRecievedTime = new Date();
 
-    const iamClient = await utils.iamClient('aws-global', req.AccountIds[0]);
+    const stsCreds = await utils.stsCreds(req.AccountIds[0]);
+    const iamClient = await utils.iamClient(stsCreds, 'aws-global');
+    const sqsClient = await utils.sqsClient(event.Records[0].awsRegion);
+
+    const response = {
+        message: 'OK',
+        accountId: req.AccountIds[0],
+        integrationName: req.IntegrationName,
+        requestMessageId: event.Records[0].messageId,
+        timestamp: Date.now
+      };
 
     try {
         if (req.RequestType === 'Delete') {
             await utils.detachPoliciesFromRole(iamClient, req.IntegrationName);
             await utils.deleteIntegrationRole(iamClient, req.IntegrationName);
             console.log(`Successfully deleted integration role ${req.IntegrationName} from account ${req.AccountIds[0]}`);
+            await utils.sendResponse(sqsClient, event.Records[0].eventSourceARN, response);
             return;
         }
         // Continue with "Create"
@@ -46,13 +57,19 @@ module.exports.handler = async (event, context, callback) => {
             await utils.detachPoliciesFromRole(iamClient, req.IntegrationName);
             await utils.deleteIntegrationRole(iamClient, req.IntegrationName);
         } else if (roleExists) {
-            callback(new Error(`Role ${req.IntegrationName} already exists`));
+            const msg = `Role ${req.IntegrationName} already exists`;
+            callback(new Error(msg));
+            response.message = msg;
+            await utils.sendResponse(sqsClient, event.Records[0].eventSourceARN, response);
             return;
         }
         await utils.createIntegrationRole(iamClient, req.IntegrationName, req.UptAccountId, req.ExternalId);
         await utils.attachPoliciesToRole(iamClient, req.IntegrationName);
         console.log(`Successfully installed integration role for ${req.IntegrationName} in account ${req.AccountIds[0]}`);
     } catch (err) {
+        response.message = 'Failed to invoke lambda function';
         console.error('Failed to invoke lambda function', err);
+    } finally {
+        await utils.sendResponse(sqsClient, event.Records[0].eventSourceARN, response);
     }
 };

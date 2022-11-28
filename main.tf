@@ -217,7 +217,7 @@ EOF
   tags = var.tags
 }
 
-# Allow the role to send SQS message to trigger child read-only role in child accounts
+# Allow the role to send/receive SQS message
 resource "aws_iam_policy" "send_message" {
   name        = "${var.integration_name}-sqsSendMessage"
   description = "Allow send message to SQS"
@@ -229,6 +229,11 @@ resource "aws_iam_policy" "send_message" {
             "Effect": "Allow",
             "Action": [ "sqs:SendMessage" ],
             "Resource": [ "${aws_sqs_queue.request_queue.arn}" ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [ "sqs:ReceiveMessage", "sqs:DeleteMessage" ],
+            "Resource": [ "${aws_sqs_queue.response_queue.arn}" ]
         }
     ]
 }

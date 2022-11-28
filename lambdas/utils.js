@@ -4,6 +4,7 @@ const { IAMClient, CreateRoleCommand, GetRoleCommand, DeleteRoleCommand } = requ
 const { STSClient, AssumeRoleCommand } = require('@aws-sdk/client-sts');
 const { PutRolePolicyCommand, DeleteRolePolicyCommand,  } = require('@aws-sdk/client-iam');
 const { AttachRolePolicyCommand, DetachRolePolicyCommand } = require('@aws-sdk/client-iam');
+const { SQSClient, SendMessageCommand } = require('@aws-sdk/client-sqs');
 
 const constants = require('./constants');
 
@@ -49,14 +50,25 @@ async function getStsCreds(sts, accountId) {
   }
 }
 
-async function iamClient(region, childAccountId) {
+async function stsCreds(childAccountId) {
   const stsClient = new STSClient();
   const creds = await getStsCreds(stsClient, childAccountId);
+  return creds;
+}
+
+async function iamClient(stsCreds, region) {
   const iam = new IAMClient({
     region,
-    credentials: creds
+    credentials: stsCreds
   });
   return iam;
+}
+
+async function sqsClient(region) {
+  const sqs = new SQSClient({
+    region
+  });
+  return sqs;
 }
 
 async function createIntegrationRole(iamClient, integrationName, uptAccountId, externalId) {
@@ -164,11 +176,45 @@ async function detachPolicyFromRole(iamClient, integrationName, policyArn) {
   }
 }
 
+function queueUrlFromArn(arn, integrationName) {
+  const splits = arn.split(':');
+  if (splits && splits.length === 6 && splits[4].length !== 0) {
+    return `https://queue.amazonaws.com/${splits[4]}/${integrationName}-response`;
+  }
+  // failed to get correct url
+  return arn;
+}
+
+async function sendResponse(sqsClient, sourceArn, integrationName, accountId, requestMessageId, errMsg) {
+  const queueUrl = queueUrlFromArn(sourceArn, integrationName);
+  try {
+    const msg = {
+      message: errMsg || 'OK',
+      accountId,
+      integrationName,
+      requestMessageId,
+      timestamp: Date.now
+    };
+
+    // Set the parameters
+    const params = {
+      QueueUrl: queueUrl,
+      MessageBody: JSON.stringify(msg, null, 2)
+    };
+    await sqsClient.send(new SendMessageCommand(params));
+  } catch (err) {
+    console.log(`Failed to send respose message to ${queueUrl}`, err);
+  }
+}
+
 module.exports = {
+  stsCreds,
   iamClient,
+  sqsClient,
   createIntegrationRole,
   deleteIntegrationRole,
   integrationRoleExists,
   attachPoliciesToRole,
-  detachPoliciesFromRole
+  detachPoliciesFromRole,
+  sendResponse
 };
