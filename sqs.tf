@@ -1,14 +1,14 @@
 
 # Queue to trigger lambda function
 resource "aws_sqs_queue" "request_queue" {
+  count                     = var.defer_role_creation == true ? 1 : 0
   name                      = "${var.integration_name}-request"
-  delay_seconds             = 90
   max_message_size          = 2048
   message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+  receive_wait_time_seconds = 2
   sqs_managed_sse_enabled   = true
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.request_queue_deadletter.arn
+    deadLetterTargetArn = aws_sqs_queue.request_queue_deadletter[0].arn
     maxReceiveCount     = 3
   })
 
@@ -17,6 +17,7 @@ resource "aws_sqs_queue" "request_queue" {
 
 # Deadletter queue
 resource "aws_sqs_queue" "request_queue_deadletter" {
+  count = var.defer_role_creation == true ? 1 : 0
   name = "${var.integration_name}-request-dlq"
 
   tags = var.tags
@@ -24,14 +25,14 @@ resource "aws_sqs_queue" "request_queue_deadletter" {
 
 # Queue to hold feedback/response messages
 resource "aws_sqs_queue" "response_queue" {
+  count                     = var.defer_role_creation == true ? 1 : 0
   name                      = "${var.integration_name}-response"
-  delay_seconds             = 90
   max_message_size          = 2048
   message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+  receive_wait_time_seconds = 2
   sqs_managed_sse_enabled   = true
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.response_queue_deadletter.arn
+    deadLetterTargetArn = aws_sqs_queue.response_queue_deadletter[0].arn
     maxReceiveCount     = 3
   })
 
@@ -40,6 +41,7 @@ resource "aws_sqs_queue" "response_queue" {
 
 # Deadletter queue
 resource "aws_sqs_queue" "response_queue_deadletter" {
+  count                     = var.defer_role_creation == true ? 1 : 0
   name                      = "${var.integration_name}-response-dlq"
 
   tags = var.tags

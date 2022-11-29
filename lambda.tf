@@ -1,6 +1,7 @@
 
 # Policy for the Lambda Function
 resource "aws_iam_role" "iam_for_lambda" {
+  count = var.defer_role_creation == true ? 1 : 0
   name = "${var.integration_name}-lambda"
 
   assume_role_policy = <<EOF
@@ -24,7 +25,8 @@ EOF
 
 # Log group for the Lambda Function
 resource "aws_cloudwatch_log_group" "function_log_group" {
-  name              = "/aws/lambda/${aws_lambda_function.uptycs_role_function.function_name}"
+  count             = var.defer_role_creation == true ? 1 : 0
+  name              = "/aws/lambda/${aws_lambda_function.uptycs_role_function[0].function_name}"
   retention_in_days = 14
   lifecycle {
     prevent_destroy = false
@@ -34,7 +36,8 @@ resource "aws_cloudwatch_log_group" "function_log_group" {
 
 # Function policy
 resource "aws_iam_policy" "function_policy" {
-  name   = "${var.integration_name}-function-policy"
+  count = var.defer_role_creation == true ? 1 : 0
+  name  = "${var.integration_name}-function-policy"
 
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -54,7 +57,7 @@ resource "aws_iam_policy" "function_policy" {
           "sqs:GetQueueAttributes"
         ],
         Effect : "Allow",
-        Resource : aws_sqs_queue.request_queue.arn
+        Resource : aws_sqs_queue.request_queue[0].arn
       },
       {
         Action : [
@@ -62,7 +65,7 @@ resource "aws_iam_policy" "function_policy" {
           "sqs:GetQueueAttributes"
         ],
         Effect : "Allow",
-        Resource : aws_sqs_queue.response_queue.arn
+        Resource : aws_sqs_queue.response_queue[0].arn
       },
       {
         Action : [
@@ -86,16 +89,16 @@ resource "aws_iam_policy" "function_policy" {
 
 # Attach policy to the role
 resource "aws_iam_role_policy_attachment" "function_policy_attachment" {
-  role = aws_iam_role.iam_for_lambda.id
-  policy_arn = aws_iam_policy.function_policy.arn
+  count = var.defer_role_creation == true ? 1 : 0
+  role = aws_iam_role.iam_for_lambda[0].id
+  policy_arn = aws_iam_policy.function_policy[0].arn
 }
 
 resource "aws_lambda_function" "uptycs_role_function" {
-  # If the file is not in the current working directory you will need to include a
-  # path.module in the filename.
+  count         = var.defer_role_creation == true ? 1 : 0
   filename      = "${path.module}/lambdas/function.zip"
   function_name = "${var.integration_name}-roleManager"
-  role          = aws_iam_role.iam_for_lambda.arn
+  role          = aws_iam_role.iam_for_lambda[0].arn
   handler       = "roleManager.handler"
 
   source_code_hash = filebase64sha256("${path.module}/lambdas/function.zip")
@@ -106,6 +109,7 @@ resource "aws_lambda_function" "uptycs_role_function" {
 
 # Set the input trigger
 resource "aws_lambda_event_source_mapping" "source_trigger" {
-  event_source_arn = aws_sqs_queue.request_queue.arn
-  function_name = aws_lambda_function.uptycs_role_function.arn
+  count            = var.defer_role_creation == true ? 1 : 0
+  event_source_arn = aws_sqs_queue.request_queue[0].arn
+  function_name = aws_lambda_function.uptycs_role_function[0].arn
 }

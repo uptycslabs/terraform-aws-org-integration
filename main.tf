@@ -219,6 +219,7 @@ EOF
 
 # Allow the role to send/receive SQS message
 resource "aws_iam_policy" "send_message" {
+  count       = var.defer_role_creation == true ? 1 : 0
   name        = "${var.integration_name}-sqsSendMessage"
   description = "Allow send message to SQS"
   policy      = <<EOF
@@ -228,12 +229,12 @@ resource "aws_iam_policy" "send_message" {
         {
             "Effect": "Allow",
             "Action": [ "sqs:SendMessage" ],
-            "Resource": [ "${aws_sqs_queue.request_queue.arn}" ]
+            "Resource": [ "${aws_sqs_queue.request_queue[0].arn}" ]
         },
         {
             "Effect": "Allow",
             "Action": [ "sqs:ReceiveMessage", "sqs:DeleteMessage" ],
-            "Resource": [ "${aws_sqs_queue.response_queue.arn}" ]
+            "Resource": [ "${aws_sqs_queue.response_queue[0].arn}" ]
         }
     ]
 }
@@ -244,6 +245,7 @@ EOF
 
 # Attach SQS Send Message Policy to the Role
 resource "aws_iam_role_policy_attachment" "sqs_policy_attach" {
+  count       = var.defer_role_creation == true ? 1 : 0
   role       = aws_iam_role.role.name
-  policy_arn = aws_iam_policy.send_message.arn
+  policy_arn = aws_iam_policy.send_message[0].arn
 }
