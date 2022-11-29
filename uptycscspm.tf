@@ -3,7 +3,7 @@ data "aws_organizations_organization" "my_org" {
 }
 
 locals {
-  child_accounts_active     = toset([for each in data.aws_organizations_organization.my_org.non_master_accounts : each.id if each.status == "ACTIVE"])
+  child_accounts_active     = var.defer_role_creation ? [] : toset([for each in data.aws_organizations_organization.my_org.non_master_accounts : each.id if each.status == "ACTIVE"])
 }
 
 resource "uptycscspm_role" "child_account_role" {

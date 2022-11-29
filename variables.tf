@@ -42,3 +42,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "defer_role_creation" {
+  description = "Defer role creation to Lambda function so it can triggered on-demand"
+  type        = bool
+  default     = true
+}
