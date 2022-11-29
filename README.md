@@ -11,9 +11,11 @@ After AWS Master Account is integrated with Uptycs, any AWS Child accounts under
     * SQS Permissions - Access limited to the SQS Queues created by this module 
     * (Optional) S3 Object Read permissions to allow access to CloudTrail events
   * SQS Queues - 2
-    * Request Queue
-    * Response Queue
+    * Request Queue (with Dead letter queue) 
+    * Response Queue (with Dead letter queue)
   * Lambda Function - 1
+    * On trigger, from SQS request queue, it will create an IAM Role (with Read Permissions) in requested child account
+    * This triggered once for all child accounts
 
 ## Child Account integration
 This module also takes care of on-boarding AWS Accounts under the organizations. There is no need to re-apply terrafrom configuration to on-board any newly created child AWS accounts.
