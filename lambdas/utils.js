@@ -185,17 +185,9 @@ function queueUrlFromArn(arn, integrationName) {
   return arn;
 }
 
-async function sendResponse(sqsClient, sourceArn, integrationName, accountId, requestMessageId, errMsg) {
+async function sendResponse(sqsClient, sourceArn, integrationName, msg) {
   const queueUrl = queueUrlFromArn(sourceArn, integrationName);
   try {
-    const msg = {
-      message: errMsg || 'OK',
-      accountId,
-      integrationName,
-      requestMessageId,
-      timestamp: Date.now
-    };
-
     // Set the parameters
     const params = {
       QueueUrl: queueUrl,
