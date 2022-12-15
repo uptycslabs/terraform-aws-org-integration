@@ -100,6 +100,7 @@ resource "aws_lambda_function" "uptycs_role_function" {
   function_name = "${var.integration_name}-roleManager"
   role          = aws_iam_role.iam_for_lambda[0].arn
   handler       = "roleManager.handler"
+  timeout       = 10
 
   source_code_hash = filebase64sha256("${path.module}/lambdas/function.zip")
 
@@ -112,4 +113,5 @@ resource "aws_lambda_event_source_mapping" "source_trigger" {
   count            = var.defer_role_creation == true ? 1 : 0
   event_source_arn = aws_sqs_queue.request_queue[0].arn
   function_name = aws_lambda_function.uptycs_role_function[0].arn
+  batch_size    = 5
 }
