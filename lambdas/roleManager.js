@@ -40,10 +40,6 @@ module.exports.handler = async (event, context, callback) => {
         const record = event.Records[i];
         const reqBody = JSON.parse(record.body);
 
-        const stsCreds = await utils.stsCreds(reqBody.AccountIds[0]);
-        const iamClient = await utils.iamClient(stsCreds, 'aws-global');
-        const sqsClient = await utils.sqsClient(record.awsRegion);
-
         const response = {
             message: 'OK',
             accountId: reqBody.AccountIds[0],
@@ -51,8 +47,12 @@ module.exports.handler = async (event, context, callback) => {
             requestMessageId: record.messageId,
             timestamp: Date.now
         };
+        const sqsClient = await utils.sqsClient(record.awsRegion);
 
         try {
+            const stsCreds = await utils.stsCreds(reqBody.AccountIds[0]);
+            const iamClient = await utils.iamClient(stsCreds, 'aws-global');
+
             if (reqBody.RequestType === 'Delete') {
                 await utils.detachPoliciesFromRole(iamClient, reqBody.IntegrationName);
                 await utils.deleteIntegrationRole(iamClient, reqBody.IntegrationName);
@@ -79,7 +79,7 @@ module.exports.handler = async (event, context, callback) => {
             console.log(`Successfully installed integration role for ${reqBody.IntegrationName} in account ${reqBody.AccountIds[0]}`);
             await utils.sendResponse(sqsClient, record.eventSourceARN, reqBody.IntegrationName, response);
         } catch (err) {
-            response.message = 'Failed to invoke lambda function';
+            response.message = `Failed to invoke lambda function. err:${err.message}`;
             console.error('Failed to invoke lambda function', err);
             await utils.sendResponse(sqsClient, record.eventSourceARN, reqBody.IntegrationName, response);
         }
