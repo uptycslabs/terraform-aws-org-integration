@@ -28,6 +28,7 @@ This module also takes care of on-boarding AWS Accounts under the organizations.
 - Requires Terraform version >= 1.2.0
 - The user should have Admin access on the master account
 - Every child account in the organization should have `OrganizationAccountAccessRole` role.
+- When applicable, S3 Bucket for CloudTrail should be owned by the Master account 
 
 ## Usage
 ### Set Profile and Region before execute terraform
