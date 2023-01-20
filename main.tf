@@ -234,7 +234,7 @@ resource "aws_iam_policy" "send_message" {
         {
             "Effect": "Allow",
             "Action": [ "sqs:ReceiveMessage", "sqs:DeleteMessage" ],
-            "Resource": [ "${aws_sqs_queue.response_queue[0].arn}" ]
+            "Resource": [ "${aws_sqs_queue.response_queue[0].arn}",  "${aws_sqs_queue.request_queue_deadletter[0].arn}", "${aws_sqs_queue.response_queue_deadletter[0].arn}" ]
         }
     ]
 }
