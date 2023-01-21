@@ -52,6 +52,10 @@ module.exports.handler = async (event, context, callback) => {
         try {
             const stsCreds = await utils.stsCreds(reqBody.AccountIds[0]);
             const iamClient = await utils.iamClient(stsCreds, 'aws-global');
+            let cloudTrailBucketName = '';
+            if (reqBody.CloudTrailBucketName) {
+                cloudTrailBucketName = reqBody.CloudTrailBucketName;
+            }
 
             if (reqBody.RequestType === 'Delete') {
                 await utils.detachPoliciesFromRole(iamClient, reqBody.IntegrationName);
@@ -75,7 +79,7 @@ module.exports.handler = async (event, context, callback) => {
                 continue;
             }
             await utils.createIntegrationRole(iamClient, reqBody.IntegrationName, reqBody.UptAccountId, reqBody.ExternalId);
-            await utils.attachPoliciesToRole(iamClient, reqBody.IntegrationName);
+            await utils.attachPoliciesToRole(iamClient, reqBody.IntegrationName,reqBody.AccountIds[0],cloudTrailBucketName);
             console.log(`Successfully installed integration role for ${reqBody.IntegrationName} in account ${reqBody.AccountIds[0]}`);
             await utils.sendResponse(sqsClient, record.eventSourceARN, reqBody.IntegrationName, response);
         } catch (err) {

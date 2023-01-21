@@ -37,6 +37,11 @@ variable "kinesis_stream_name" {
   default     = ""
 }
 
+variable "cloudtrail_account_id" {
+  description = "AccountId of an account in organization which have cloudtrail setup"
+  type = string
+}
+
 variable "tags" {
   description = "Tags to apply to the resources created by this module"
   type        = map(string)
