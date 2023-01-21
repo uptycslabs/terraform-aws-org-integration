@@ -54,6 +54,7 @@ const ReadOnlyPolicy = `{
               "sns:GetTopicAttributes",
               "sns:ListTopics",
               "sns:GetSubscriptionAttributes",
+              "sqs:GetQueueUrl",
               "sqs:ListQueues",
               "sqs:GetQueueAttributes",
               "sqs:ListQueueTags",
