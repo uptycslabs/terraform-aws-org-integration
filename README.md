@@ -98,7 +98,7 @@ output "aws_parameters" {
 | vpc_flowlogs_bucket_name  | Name of the S3 bucket in master for VPC flow logs                   | `string` | `""`                | Optional |
 | cloudtrail_s3_bucket_name | Name of the organization cloud trail S3 bucket                      | `string` | `""`                | Optional |
 | kinesis_stream_name       | Name of the organization Kinesis stream                             | `string` | `""`                | Optional |
-| cloudtrail_in_master     | Specifies whether the cloudtrail set up is in master account or not | `string` |     `true`                | Yes      |
+| cloudtrail_in_master     | Specifies whether the cloudtrail set up is in master account or not | `bool` |     `true`                | Yes      |
 
 ### Execute Terraform script
 
