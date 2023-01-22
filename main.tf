@@ -1,23 +1,22 @@
 data "aws_s3_bucket" "vpc_log_bucket_arn" {
-  count  = (local.isCloudTrailtrailInMaster && var.vpc_flowlogs_bucket_name != "") ? 1 : 0
+  count  = (var.cloudtrail_in_master && var.vpc_flowlogs_bucket_name != "") ? 1 : 0
   bucket = var.vpc_flowlogs_bucket_name
 }
 
 data "aws_s3_bucket" "cloudtrail_log_bucket_arn" {
-  count  =  (local.isCloudTrailtrailInMaster && var.cloudtrail_s3_bucket_name != "") ? 1 : 0
+  count  =  (var.cloudtrail_in_master && var.cloudtrail_s3_bucket_name != "") ? 1 : 0
   bucket = var.cloudtrail_s3_bucket_name
 }
 
 data "aws_kinesis_stream" "kinesis_stream_arn" {
-  count = (local.isCloudTrailtrailInMaster && var.kinesis_stream_name != "") ? 1 : 0
+  count = (var.cloudtrail_in_master && var.kinesis_stream_name != "") ? 1 : 0
   name  = var.kinesis_stream_name
 }
 
 locals {
-  isCloudTrailtrailInMaster = (var.aws_account_id == var.cloudtrail_account_id) ? true : false
-  cloudtrail_log_bucket_arn = (local.isCloudTrailtrailInMaster && var.cloudtrail_s3_bucket_name != "") ? data.aws_s3_bucket.cloudtrail_log_bucket_arn[0].arn : null
-  vpc_log_bucket_arn        = (local.isCloudTrailtrailInMaster && var.vpc_flowlogs_bucket_name != "")  ? data.aws_s3_bucket.vpc_log_bucket_arn[0].arn : null
-  kinesis_stream_arn        = (local.isCloudTrailtrailInMaster && var.kinesis_stream_name != "") ? data.aws_kinesis_stream.kinesis_stream_arn[0].arn : null
+  cloudtrail_log_bucket_arn = (var.cloudtrail_in_master && var.cloudtrail_s3_bucket_name != "") ? data.aws_s3_bucket.cloudtrail_log_bucket_arn[0].arn : null
+  vpc_log_bucket_arn        = (var.cloudtrail_in_master && var.vpc_flowlogs_bucket_name != "")  ? data.aws_s3_bucket.vpc_log_bucket_arn[0].arn : null
+  kinesis_stream_arn        = (var.cloudtrail_in_master && var.kinesis_stream_name != "") ? data.aws_kinesis_stream.kinesis_stream_arn[0].arn : null
 }
 resource "aws_iam_role" "role" {
   name = var.integration_name

@@ -75,8 +75,8 @@ module "org-config" {
   # Name of the S3 bucket in the master account that contains the VPC flow logs
   vpc_flowlogs_bucket_name = ""
 
-  # AccountId of an account in the organization where you store cloudtrail data
-  cloudtrail_account_id = "<cloudtrail_account_id>"
+  # Specify whether the cloudtrail_s3_bucket_name/kinesis_stream_name/vpc_flowlogs_bucket_name are in master account or not
+  cloudtrail_in_master = true
 
 }
 
@@ -98,7 +98,7 @@ output "aws_parameters" {
 | vpc_flowlogs_bucket_name  | Name of the S3 bucket in master for VPC flow logs                   | `string` | `""`                | Optional |
 | cloudtrail_s3_bucket_name | Name of the organization cloud trail S3 bucket                      | `string` | `""`                | Optional |
 | kinesis_stream_name       | Name of the organization Kinesis stream                             | `string` | `""`                | Optional |
-| cloudtrail_account_id     | AccountId of an account in organization which have cloudtrail setup | `string` |                     | Yes      |
+| cloudtrail_in_master     | Specifies whether the cloudtrail set up is in master account or not | `string` |     `true`                | Yes      |
 
 ### Execute Terraform script
 

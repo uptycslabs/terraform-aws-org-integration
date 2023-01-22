@@ -37,9 +37,10 @@ variable "kinesis_stream_name" {
   default     = ""
 }
 
-variable "cloudtrail_account_id" {
-  description = "AccountId of an account in organization which have cloudtrail setup"
+variable "cloudtrail_in_master" {
+  description = "Specifies whether cloudtrail_s3_bucket_name/kinesis_stream_name are in master account or not"
   type = string
+  default = true
 }
 
 variable "tags" {
