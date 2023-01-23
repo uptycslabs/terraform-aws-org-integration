@@ -83,6 +83,7 @@ resource "aws_iam_role" "role" {
             "sns:ListTagsForResource",
             "sns:ListTopics",
             "sqs:GetQueueAttributes",
+            "sqs:GetQueueUrl",
             "sqs:ListQueueTags",
             "sqs:ListQueues",
             "ssm:ListCommandInvocations"
