@@ -69,14 +69,14 @@ module "org-config" {
   # Provide the S3 bucket name which contains the CloudTrail data
   cloudtrail_s3_bucket_name = ""
 
+  # Specify whether the given cloudtrail s3 bucket is in master account or not
+  cloudtrail_s3_bucket_in_master = true
+
   # Name of the Kinesis stream configured to stream CloudTrail data
   kinesis_stream_name = ""
 
   # Name of the S3 bucket in the master account that contains the VPC flow logs
   vpc_flowlogs_bucket_name = ""
-
-  # Specify whether the cloudtrail_s3_bucket_name/kinesis_stream_name/vpc_flowlogs_bucket_name are in master account or not
-  cloudtrail_in_master = true
 
 }
 
@@ -97,13 +97,14 @@ output "aws_parameters" {
 | external_id               | External ID                                                         | `uuid4`  | `""`                | Yes      |
 | vpc_flowlogs_bucket_name  | Name of the S3 bucket in master for VPC flow logs                   | `string` | `""`                | Optional |
 | cloudtrail_s3_bucket_name | Name of the organization cloud trail S3 bucket                      | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_in_master     | Specifies whether the cloudtrail s3 bucket is in master account or not | `bool` |     `true`                |       |
 | kinesis_stream_name       | Name of the organization Kinesis stream                             | `string` | `""`                | Optional |
-| cloudtrail_in_master     | Specifies whether the cloudtrail set up is in master account or not | `bool` |     `true`                | Yes      |
+
 
 ### Execute Terraform script
 
 ```sh
-$ terraform init
+$ terraform init -upgrade
 $ terraform plan
 $ terraform apply
 ```

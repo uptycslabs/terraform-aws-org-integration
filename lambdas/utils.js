@@ -2,8 +2,8 @@
 
 const { IAMClient, CreateRoleCommand, GetRoleCommand, DeleteRoleCommand } = require('@aws-sdk/client-iam');
 const { STSClient, AssumeRoleCommand } = require('@aws-sdk/client-sts');
-const { PutRolePolicyCommand, DeleteRolePolicyCommand,  } = require('@aws-sdk/client-iam');
-const { AttachRolePolicyCommand, DetachRolePolicyCommand, CreatePolicyCommand, DeletePolicyCommand, ListAttachedRolePoliciesCommand} = require('@aws-sdk/client-iam');
+const { PutRolePolicyCommand, DeleteRolePolicyCommand } = require('@aws-sdk/client-iam');
+const { AttachRolePolicyCommand, DetachRolePolicyCommand, CreatePolicyCommand, DeletePolicyCommand, ListAttachedRolePoliciesCommand } = require('@aws-sdk/client-iam');
 const { SQSClient, SendMessageCommand } = require('@aws-sdk/client-sqs');
 
 const constants = require('./constants');
@@ -133,14 +133,14 @@ async function attachPoliciesToRole(iamClient, integrationName, AccountId, Cloud
   await attachPolicyToRole(iamClient, integrationName, constants.ViewOnlyAccessArn);
   await attachPolicyToRole(iamClient, integrationName, constants.SecurityAuditArn);
   if (CloudTrailBucketName !== '') {
-    await attachBucketPolicy(iamClient, integrationName, AccountId, CloudTrailBucketName,'CloudtrailBucketPolicy')
+    await attachBucketPolicy(iamClient, integrationName, AccountId, CloudTrailBucketName, 'CloudtrailBucketPolicy')
   }
 }
 
-async function attachBucketPolicy(iamClient, IntegrationName, AccountId, BucketName,suffix) {
+async function attachBucketPolicy(iamClient, IntegrationName, AccountId, BucketName, suffix) {
   await createBucketPolicy(iamClient, IntegrationName, BucketName, suffix)
   const policyArn = `arn:aws:iam::${AccountId}:policy/${IntegrationName}-${suffix}`
-  await attachPolicyToRole(iamClient,IntegrationName,policyArn)
+  await attachPolicyToRole(iamClient, IntegrationName, policyArn)
 }
 
 
@@ -160,7 +160,7 @@ async function detachPoliciesFromRole(iamClient, integrationName) {
 }
 
 async function ListRolePolicies(iamClient, integrationName) {
-  
+
   try {
     const params = {
       RoleName: integrationName
@@ -187,15 +187,15 @@ async function createReadOnlyInlinePolicy(iamClient, integrationName) {
   }
 }
 
-async function createBucketPolicy(iamClient, IntegrationName,BucketName,suffix) {
+async function createBucketPolicy(iamClient, IntegrationName, BucketName, suffix) {
   try {
     const params = {
-      PolicyName: IntegrationName + '-'+suffix,
+      PolicyName: IntegrationName + '-' + suffix,
       PolicyDocument: bucketPolicy(BucketName),
     }
     await iamClient.send(new CreatePolicyCommand(params));
-  }catch (err) {
-    console.log(`Failed to create a bucket policy for bucket ${BucketName}`,err)
+  } catch (err) {
+    console.log(`Failed to create a bucket policy for bucket ${BucketName}`, err)
   }
 }
 
@@ -215,7 +215,7 @@ async function deleteReadOnlyInlinePolicy(iamClient, integrationName) {
 async function deletePolicy(iamClient, policyArn) {
   try {
     const params = {
-      PolicyArn : policyArn,
+      PolicyArn: policyArn,
     }
     await iamClient.send(new DeletePolicyCommand(params));
   } catch (err) {

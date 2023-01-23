@@ -1,26 +1,26 @@
 data "aws_s3_bucket" "vpc_log_bucket_arn" {
-  count  = (var.cloudtrail_in_master && var.vpc_flowlogs_bucket_name != "") ? 1 : 0
+  count  = var.vpc_flowlogs_bucket_name != "" ? 1 : 0
   bucket = var.vpc_flowlogs_bucket_name
 }
 
 data "aws_s3_bucket" "cloudtrail_log_bucket_arn" {
-  count  =  (var.cloudtrail_in_master && var.cloudtrail_s3_bucket_name != "") ? 1 : 0
+  count  = (var.cloudtrail_s3_bucket_in_master && var.cloudtrail_s3_bucket_name != "") ? 1 : 0
   bucket = var.cloudtrail_s3_bucket_name
 }
 
 data "aws_kinesis_stream" "kinesis_stream_arn" {
-  count = (var.cloudtrail_in_master && var.kinesis_stream_name != "") ? 1 : 0
+  count =  var.kinesis_stream_name != "" ? 1 : 0
   name  = var.kinesis_stream_name
 }
 
 locals {
-  cloudtrail_log_bucket_arn = (var.cloudtrail_in_master && var.cloudtrail_s3_bucket_name != "") ? data.aws_s3_bucket.cloudtrail_log_bucket_arn[0].arn : null
-  vpc_log_bucket_arn        = (var.cloudtrail_in_master && var.vpc_flowlogs_bucket_name != "")  ? data.aws_s3_bucket.vpc_log_bucket_arn[0].arn : null
-  kinesis_stream_arn        = (var.cloudtrail_in_master && var.kinesis_stream_name != "") ? data.aws_kinesis_stream.kinesis_stream_arn[0].arn : null
+  cloudtrail_log_bucket_arn = (var.cloudtrail_s3_bucket_in_master && var.cloudtrail_s3_bucket_name != "") ? data.aws_s3_bucket.cloudtrail_log_bucket_arn[0].arn : null
+  vpc_log_bucket_arn        = var.vpc_flowlogs_bucket_name != "" ? data.aws_s3_bucket.vpc_log_bucket_arn[0].arn : null
+  kinesis_stream_arn        = var.kinesis_stream_name != "" ? data.aws_kinesis_stream.kinesis_stream_arn[0].arn : null
 }
 resource "aws_iam_role" "role" {
   name = var.integration_name
-  
+
   path = "/"
   inline_policy {
     name = "UptycsReadOnlyPolicy"
@@ -29,63 +29,63 @@ resource "aws_iam_role" "role" {
       Version = "2012-10-17"
       Statement = [
         {
-          Action   = [
-              "apigateway:GET",
-	      "codebuild:BatchGetProjects",
-              "codebuild:ListProjects",
-              "codecommit:GetBranch",
-              "codecommit:GetCommit",
-              "codecommit:GetRepository",
-              "codepipeline:GetPipeline",
-              "codepipeline:ListTagsForResource",
-              "ds:ListTagsForResource",
-              "ec2:DescribeAccountAttributes",
-              "ec2:GetEbsEncryptionByDefault",
-              "eks:DescribeAddon",
-              "eks:DescribeCluster",
-              "eks:DescribeFargateProfile",
-              "eks:DescribeIdentityProviderConfig",
-              "eks:DescribeNodegroup",
-              "eks:DescribeUpdate",
-              "eks:ListAddons",
-              "eks:ListClusters",
-              "eks:ListFargateProfiles",
-              "eks:ListIdentityProviderConfigs",
-              "eks:ListNodegroups",
-              "eks:ListTagsForResource",
-              "eks:ListUpdates",
-              "elasticache:ListTagsForResource",
-              "es:ListTags",
-              "glacier:DescribeJob",
-              "glacier:DescribeVault",
-              "glacier:GetDataRetrievalPolicy",
-              "glacier:GetJobOutput",
-              "glacier:GetVaultAccessPolicy",
-              "glacier:GetVaultLock",
-              "glacier:GetVaultNotifications",
-              "glacier:ListJobs",
-              "glacier:ListTagsForVault",
-              "glacier:ListVaults",
-              "kinesis:DescribeStream",
-              "logs:FilterLogEvents",
-              "ram:GetResourceShares",
-              "ram:ListResources",
-              "s3:GetIntelligentTieringConfiguration",
-              "secretsmanager:DescribeSecret",
-              "servicecatalog:DescribePortfolio",
-              "servicecatalog:DescribeProductAsAdmin",
-              "servicecatalog:DescribeProvisioningArtifact",
-              "servicecatalog:DescribeServiceAction",
-              "servicecatalog:SearchProductsAsAdmin",
-              "sns:GetSubscriptionAttributes",
-              "sns:GetTopicAttributes",
-              "sns:ListSubscriptionsByTopic",
-              "sns:ListTagsForResource",
-              "sns:ListTopics",
-              "sqs:GetQueueAttributes",
-              "sqs:ListQueueTags",
-              "sqs:ListQueues",
-              "ssm:ListCommandInvocations"
+          Action = [
+            "apigateway:GET",
+            "codebuild:BatchGetProjects",
+            "codebuild:ListProjects",
+            "codecommit:GetBranch",
+            "codecommit:GetCommit",
+            "codecommit:GetRepository",
+            "codepipeline:GetPipeline",
+            "codepipeline:ListTagsForResource",
+            "ds:ListTagsForResource",
+            "ec2:DescribeAccountAttributes",
+            "ec2:GetEbsEncryptionByDefault",
+            "eks:DescribeAddon",
+            "eks:DescribeCluster",
+            "eks:DescribeFargateProfile",
+            "eks:DescribeIdentityProviderConfig",
+            "eks:DescribeNodegroup",
+            "eks:DescribeUpdate",
+            "eks:ListAddons",
+            "eks:ListClusters",
+            "eks:ListFargateProfiles",
+            "eks:ListIdentityProviderConfigs",
+            "eks:ListNodegroups",
+            "eks:ListTagsForResource",
+            "eks:ListUpdates",
+            "elasticache:ListTagsForResource",
+            "es:ListTags",
+            "glacier:DescribeJob",
+            "glacier:DescribeVault",
+            "glacier:GetDataRetrievalPolicy",
+            "glacier:GetJobOutput",
+            "glacier:GetVaultAccessPolicy",
+            "glacier:GetVaultLock",
+            "glacier:GetVaultNotifications",
+            "glacier:ListJobs",
+            "glacier:ListTagsForVault",
+            "glacier:ListVaults",
+            "kinesis:DescribeStream",
+            "logs:FilterLogEvents",
+            "ram:GetResourceShares",
+            "ram:ListResources",
+            "s3:GetIntelligentTieringConfiguration",
+            "secretsmanager:DescribeSecret",
+            "servicecatalog:DescribePortfolio",
+            "servicecatalog:DescribeProductAsAdmin",
+            "servicecatalog:DescribeProvisioningArtifact",
+            "servicecatalog:DescribeServiceAction",
+            "servicecatalog:SearchProductsAsAdmin",
+            "sns:GetSubscriptionAttributes",
+            "sns:GetTopicAttributes",
+            "sns:ListSubscriptionsByTopic",
+            "sns:ListTagsForResource",
+            "sns:ListTopics",
+            "sqs:GetQueueAttributes",
+            "sqs:ListQueueTags",
+            "sqs:ListQueues",
+            "ssm:ListCommandInvocations"
           ]
           Effect   = "Allow"
           Resource = "*"
@@ -245,7 +245,7 @@ EOF
 
 # Attach SQS Send Message Policy to the Role
 resource "aws_iam_role_policy_attachment" "sqs_policy_attach" {
-  count       = var.defer_role_creation == true ? 1 : 0
+  count      = var.defer_role_creation == true ? 1 : 0
   role       = aws_iam_role.role.name
   policy_arn = aws_iam_policy.send_message[0].arn
 }

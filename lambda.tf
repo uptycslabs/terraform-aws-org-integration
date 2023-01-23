@@ -2,7 +2,7 @@
 # Policy for the Lambda Function
 resource "aws_iam_role" "iam_for_lambda" {
   count = var.defer_role_creation == true ? 1 : 0
-  name = "${var.integration_name}-lambda"
+  name  = "${var.integration_name}-lambda"
 
   assume_role_policy = <<EOF
 {
@@ -89,8 +89,8 @@ resource "aws_iam_policy" "function_policy" {
 
 # Attach policy to the role
 resource "aws_iam_role_policy_attachment" "function_policy_attachment" {
-  count = var.defer_role_creation == true ? 1 : 0
-  role = aws_iam_role.iam_for_lambda[0].id
+  count      = var.defer_role_creation == true ? 1 : 0
+  role       = aws_iam_role.iam_for_lambda[0].id
   policy_arn = aws_iam_policy.function_policy[0].arn
 }
 
@@ -105,13 +105,13 @@ resource "aws_lambda_function" "uptycs_role_function" {
   source_code_hash = filebase64sha256("${path.module}/lambdas/function.zip")
 
   runtime = "nodejs16.x"
-  tags = var.tags
+  tags    = var.tags
 }
 
 # Set the input trigger
 resource "aws_lambda_event_source_mapping" "source_trigger" {
   count            = var.defer_role_creation == true ? 1 : 0
   event_source_arn = aws_sqs_queue.request_queue[0].arn
-  function_name = aws_lambda_function.uptycs_role_function[0].arn
-  batch_size    = 5
+  function_name    = aws_lambda_function.uptycs_role_function[0].arn
+  batch_size       = 5
 }

@@ -18,7 +18,7 @@ resource "aws_sqs_queue" "request_queue" {
 # Deadletter queue
 resource "aws_sqs_queue" "request_queue_deadletter" {
   count = var.defer_role_creation == true ? 1 : 0
-  name = "${var.integration_name}-request-dlq"
+  name  = "${var.integration_name}-request-dlq"
 
   tags = var.tags
 }
@@ -41,8 +41,8 @@ resource "aws_sqs_queue" "response_queue" {
 
 # Deadletter queue
 resource "aws_sqs_queue" "response_queue_deadletter" {
-  count                     = var.defer_role_creation == true ? 1 : 0
-  name                      = "${var.integration_name}-response-dlq"
+  count = var.defer_role_creation == true ? 1 : 0
+  name  = "${var.integration_name}-response-dlq"
 
   tags = var.tags
 }

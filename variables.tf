@@ -31,16 +31,17 @@ variable "cloudtrail_s3_bucket_name" {
   default     = ""
 }
 
+variable "cloudtrail_s3_bucket_in_master" {
+  description = "Specifies whether cloudtrail s3 bucket is in master account or not"
+  type        = string
+  default     = true
+}
+
+
 variable "kinesis_stream_name" {
   description = "Kinesis stream name for cloudtrail logs. Required, if customer wants to attach kinesis stream for cloudtrail logs."
   type        = string
   default     = ""
-}
-
-variable "cloudtrail_in_master" {
-  description = "Specifies whether cloudtrail_s3_bucket_name/kinesis_stream_name are in master account or not"
-  type = string
-  default = true
 }
 
 variable "tags" {
