@@ -1,7 +1,7 @@
 output "aws_parameters" {
   description = "aws parameters (ExternalId and IntegrationName)"
-  value       =  {
+  value = {
     integrationName = var.integration_name
-    ExternalId = var.external_id
+    ExternalId      = var.external_id
   }
 }

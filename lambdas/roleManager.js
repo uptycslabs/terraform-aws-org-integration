@@ -14,24 +14,24 @@ module.exports.handler = async (event, context, callback) => {
         for (let i = 0; i < event.Records.length; i++) {
             const record = event.Records[i];
             if (!record || !record.body) {
-                throw(new Error('No event specified'));
+                throw (new Error('No event specified'));
             }
             const req = JSON.parse(record.body);
             // Validate RequestType
             if (!req.RequestType || (req.RequestType !== 'Create' && req.RequestType !== 'Delete')) {
-                throw(new Error('Invalid RequestType. Valid values: "Create" or "Delete"'));
+                throw (new Error('Invalid RequestType. Valid values: "Create" or "Delete"'));
             }
             // Check if all required attributes are set
             if (!req.IntegrationName || !req.AccountIds || !req.UptAccountId || !req.ExternalId || !req.RequestType) {
-                throw(new Error(`Request:${JSON.stringify(req, null, 2)} is not valid. Required fields are missing`));
+                throw (new Error(`Request:${JSON.stringify(req, null, 2)} is not valid. Required fields are missing`));
             }
 
             // Currently we only support one account at a time
             if (req.AccountIds.length !== 1) {
-                throw(new Error('AccountIds must be an array of strings with length of 1'));
+                throw (new Error('AccountIds must be an array of strings with length of 1'));
             }
         }
-    } catch(err) {
+    } catch (err) {
         callback(err);
         return;
     }
@@ -52,6 +52,7 @@ module.exports.handler = async (event, context, callback) => {
         try {
             const stsCreds = await utils.stsCreds(reqBody.AccountIds[0]);
             const iamClient = await utils.iamClient(stsCreds, 'aws-global');
+            const cloudTrailBucketName = reqBody.CloudTrailBucketName ? reqBody.CloudTrailBucketName : '';
 
             if (reqBody.RequestType === 'Delete') {
                 await utils.detachPoliciesFromRole(iamClient, reqBody.IntegrationName);
@@ -75,7 +76,7 @@ module.exports.handler = async (event, context, callback) => {
                 continue;
             }
             await utils.createIntegrationRole(iamClient, reqBody.IntegrationName, reqBody.UptAccountId, reqBody.ExternalId);
-            await utils.attachPoliciesToRole(iamClient, reqBody.IntegrationName);
+            await utils.attachPoliciesToRole(iamClient, reqBody.IntegrationName, reqBody.AccountIds[0], cloudTrailBucketName);
             console.log(`Successfully installed integration role for ${reqBody.IntegrationName} in account ${reqBody.AccountIds[0]}`);
             await utils.sendResponse(sqsClient, record.eventSourceARN, reqBody.IntegrationName, response);
         } catch (err) {
