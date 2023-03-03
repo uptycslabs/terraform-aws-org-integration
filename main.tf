@@ -41,6 +41,7 @@ resource "aws_iam_role" "role" {
             "ds:ListTagsForResource",
             "ec2:DescribeAccountAttributes",
             "ec2:GetEbsEncryptionByDefault",
+	    "ec2:GetTransitGatewayMulticastDomainAssociations",
             "ec2:SearchTransitGatewayRoutes",
             "eks:DescribeAddon",
             "eks:DescribeCluster",
