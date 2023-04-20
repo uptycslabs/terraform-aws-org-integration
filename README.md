@@ -16,7 +16,11 @@ After AWS Master Account is integrated with Uptycs, any AWS Child accounts under
   * Request Queue (with Dead letter queue)
   * Response Queue (with Dead letter queue)
 * Lambda Function - 1
-  * On trigger, from SQS request queue, it will create an IAM Role (with Read Permissions) in requested child account
+  * On trigger, from SQS request queue, it will create an IAM Role in requested child account by attaching following policies:
+    * `policy/job-function/ViewOnlyAccess`
+    * `policy/SecurityAudit`
+    * `Read-Only (Customer Inline)`
+    * (Optional) S3 Object Read permissions to allow access to CloudTrail events if s3 bucket is in child account
   * This triggered once for all child accounts
 
 ## Child Account integration
@@ -66,11 +70,12 @@ module "org-config" {
   # Following bucket and stream configurations are optional
   # Inorder to ingest organization CloudTrail logs you need to set either `cloudtrail_s3_bucket_name` or `kinesis_stream_name`
 
-  # Provide the S3 bucket name which contains the CloudTrail data
-  cloudtrail_s3_bucket_name = ""
-
-  # Specify whether the given cloudtrail s3 bucket is in master account or not
+  # Specify whether the given cloudtrail S3 bucket is in master account or not (true/false)
   cloudtrail_s3_bucket_in_master = true
+
+  # Provide the S3 bucket name which contains the CloudTrail data
+  # Ignore incase of S3 bucket present on child account
+  cloudtrail_s3_bucket_name = ""
 
   # Name of the Kinesis stream configured to stream CloudTrail data
   kinesis_stream_name = ""
@@ -89,17 +94,16 @@ output "aws_parameters" {
 ### Inputs explained
 
 
-| Name                      | Description                                                         | Type     | Default             | Required |
-| --------------------------- | --------------------------------------------------------------------- | ---------- | --------------------- | ---------- |
-| integration_name          | Prefix to be used for naming new resources                          | `string` | `UptycsIntegration` |          |
-| upt_account_id            | Uptycs AWS account ID                                               | `string` | `""`                | Yes      |
-| aws_account_id            | AWS organization's master account ID                                | `string` | `""`                | Yes      |
-| external_id               | External ID                                                         | `uuid4`  | `""`                | Yes      |
-| vpc_flowlogs_bucket_name  | Name of the S3 bucket in master for VPC flow logs                   | `string` | `""`                | Optional |
-| cloudtrail_s3_bucket_name | Name of the organization cloud trail S3 bucket                      | `string` | `""`                | Optional |
-| cloudtrail_s3_bucket_in_master     | Specifies whether the cloudtrail s3 bucket is in master account or not | `bool` |     `true`                |       |
-| kinesis_stream_name       | Name of the organization Kinesis stream                             | `string` | `""`                | Optional |
-
+| Name                           | Description                                                            | Type     | Default             | Required |
+| -------------------------------- | ------------------------------------------------------------------------ | ---------- | --------------------- | ---------- |
+| integration_name               | Prefix to be used for naming new resources                             | `string` | `UptycsIntegration` |          |
+| upt_account_id                 | Uptycs AWS account ID                                                  | `string` | `""`                | Yes      |
+| aws_account_id                 | AWS organization's master account ID                                   | `string` | `""`                | Yes      |
+| external_id                    | External ID                                                            | `uuid4`  | `""`                | Yes      |
+| vpc_flowlogs_bucket_name       | Name of the S3 bucket in master for VPC flow logs                      | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_name      | Name of the organization cloud trail S3 bucket                         | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_in_master | Specifies whether the cloudtrail s3 bucket is in master account or not | `bool`   | `true`              |          |
+| kinesis_stream_name            | Name of the organization Kinesis stream                                | `string` | `""`                | Optional |
 
 ### Execute Terraform script
 
