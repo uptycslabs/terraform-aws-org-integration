@@ -16,7 +16,7 @@ After AWS Master Account is integrated with Uptycs, any AWS Child accounts under
   * Request Queue (with Dead letter queue)
   * Response Queue (with Dead letter queue)
 * Lambda Function - 1
-  * On trigger, from SQS request queue, it will create an IAM Role in requested child account by attaching following policies:
+  * On trigger, from SQS request queue, it will create an IAM Role in requested child account by attaching the following policies:
     * `policy/job-function/ViewOnlyAccess`
     * `policy/SecurityAudit`
     * `Read-Only (Customer Inline)`
@@ -74,7 +74,7 @@ module "org-config" {
   cloudtrail_s3_bucket_in_master = true
 
   # Provide the S3 bucket name which contains the CloudTrail data
-  # Ignore incase of S3 bucket present on child account
+  # Ignore this field in case the CloudTrail S3 bucket is in a child account
   cloudtrail_s3_bucket_name = ""
 
   # Name of the Kinesis stream configured to stream CloudTrail data
