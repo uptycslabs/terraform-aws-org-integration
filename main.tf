@@ -46,6 +46,7 @@ resource "aws_iam_role" "role" {
             "eks:ListNodegroups",
             "eks:ListTagsForResource",
             "eks:ListUpdates",
+            "elasticfilesystem:DescribeFileSystemPolicy",
             "glacier:DescribeJob",
             "glacier:GetDataRetrievalPolicy",
             "glacier:GetJobOutput",
