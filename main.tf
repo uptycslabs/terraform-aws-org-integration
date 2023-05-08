@@ -1,19 +1,21 @@
+data "aws_region" "current" {}
+
 module "cloud_trail_bucket_details" {
   source           = "./bucketModule"
-  resource_region  = var.cloudtrail_s3_bucket_region
+  resource_region  = var.cloudtrail_s3_bucket_region != "" ? var.cloudtrail_s3_bucket_region: data.aws_region.current.id
   bucket_name      = var.cloudtrail_s3_bucket_name
   bucket_in_master = var.cloudtrail_s3_bucket_in_master
 }
 
 module "vpc_flow_log_bucket_details" {
   source          = "./bucketModule"
-  resource_region = var.vpc_flowlogs_bucket_region
+  resource_region = var.vpc_flowlogs_bucket_region != "" ? var.vpc_flowlogs_bucket_region : data.aws_region.current.id
   bucket_name     = var.vpc_flowlogs_bucket_name
 }
 
 module "kinesis_stream_deatils" {
   source                = "./kinesisModule"
-  kinesis_stream_region = var.kinesis_stream_region
+  kinesis_stream_region = var.kinesis_stream_region != "" ? var.kinesis_stream_region : data.aws_region.current.id
   kinesis_stream_name   = var.kinesis_stream_name
 }
 
