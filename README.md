@@ -4,13 +4,6 @@ This module allows you to integrate AWS master account with Uptycs so required A
 
 After AWS Master Account is integrated with Uptycs, any AWS Child accounts under Organization are automatically integrated (More on this later).
 
-## Prerequisites
-
-- Requires Terraform version >= 1.2.0
-- The user should have Admin access on the master account
-- Every child account in the organization should have OrganizationAccountAccessRole role. Please carefully set up this role in each child account before beginning the integration process.
-- When applicable, S3 Bucket for CloudTrail should be owned by the Master account
-
 ## Resources created by this module
 
 * IAM Role in master account. The role has following policies attached
@@ -38,6 +31,12 @@ This module also takes care of on-boarding AWS Accounts under the organizations.
 
 ![My Image](./images/RoleCreationFlow.jpg)
 
+## Prerequisites
+
+- Requires Terraform version >= 1.2.0
+- The user should have Admin access on the master account
+- Every child account in the organization should have `OrganizationAccountAccessRole` role.
+- When applicable, S3 Bucket for CloudTrail should be owned by the Master account
 ## Usage
 
 ### Set Profile and Region before execute terraform
