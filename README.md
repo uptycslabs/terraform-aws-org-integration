@@ -78,8 +78,6 @@ module "org-config" {
   cloudtrail_s3_bucket_name = ""
   cloudtrail_s3_bucket_region = ""
 
-  # Please make sure to provide all necessary CloudTrail bucket information on the Uptycs Integrations page, after successfully running the Terraform script.
-
   # Name of the Kinesis stream configured to stream CloudTrail data
   kinesis_stream_name = ""
   # The region where the kinesis stream exists
