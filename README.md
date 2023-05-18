@@ -51,7 +51,7 @@ export AWS_DEFAULT_REGION="< pass region >"
 
 ```
 module "org-config" {
-  source           = "github.com/uptycslabs/terraform-aws-org-integration"
+  source           = "uptycslabs/org-integration/aws"
 
   # Modify as you need, this will be used to name the resources
   integration_name = "UptycsIntegration"
