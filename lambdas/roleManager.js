@@ -67,7 +67,10 @@ module.exports.handler = async (event, context, callback) => {
             // Check if we have to replace existing role
             if (reqBody.Force && roleExists) {
                 await utils.detachPoliciesFromRole(iamClient, reqBody.IntegrationName);
-                await utils.deleteIntegrationRole(iamClient, reqBody.IntegrationName);
+                await utils.attachPoliciesToRole(iamClient, reqBody.IntegrationName, reqBody.AccountIds[0], cloudTrailBucketName);
+                console.log(`Successfully updated policies role for ${reqBody.IntegrationName} in account ${reqBody.AccountIds[0]}`);
+                await utils.sendResponse(sqsClient, record.eventSourceARN, reqBody.IntegrationName, response);
+                continue;
             } else if (roleExists) {
                 const msg = `Role ${reqBody.IntegrationName} already exists`;
                 response.message = msg;
