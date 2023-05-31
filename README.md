@@ -36,7 +36,6 @@ This module also takes care of on-boarding AWS Accounts under the organizations.
 - Requires Terraform version >= 1.2.0
 - The user should have Admin access on the master account
 - Every child account in the organization should have `OrganizationAccountAccessRole` role.
-- When applicable, S3 Bucket for CloudTrail should be owned by the Master account
 
 ## Usage
 
@@ -56,8 +55,8 @@ module "org-config" {
   # Modify as you need, this will be used to name the resources
   integration_name = "UptycsIntegration"
 
-  # Copy Uptycs' AWS Account ID into 'upt_account_id'
-  # Browse to the following page in Uptycs's UI and Look for "Uptycs Account ID" at the top right corner 
+  # Copy Uptycs Account ID into 'upt_account_id'
+  # Look for "Uptycs Account ID" at the top right corner of the Uptycs Console
   # Uptycs' UI: "Cloud"->"AWS"->"Integrations"->"ORG INTEGRATION"
   upt_account_id = "<upt_account_id>"
 
@@ -69,19 +68,25 @@ module "org-config" {
 
   # Following bucket and stream configurations are optional
   # Inorder to ingest organization CloudTrail logs you need to set either `cloudtrail_s3_bucket_name` or `kinesis_stream_name`
+  # Provide the resource's regions if these are diiferent from default region
 
   # Specify whether the given cloudtrail S3 bucket is in master account or not (true/false)
   cloudtrail_s3_bucket_in_master = true
 
-  # Provide the S3 bucket name which contains the CloudTrail data
+  # Provide the S3 bucket name and region which contains the CloudTrail data
   # Ignore this field in case the CloudTrail S3 bucket is in a child account
   cloudtrail_s3_bucket_name = ""
+  cloudtrail_s3_bucket_region = ""
 
   # Name of the Kinesis stream configured to stream CloudTrail data
   kinesis_stream_name = ""
+  # The region where the kinesis stream exists
+  kinesis_stream_region = ""
 
   # Name of the S3 bucket in the master account that contains the VPC flow logs
   vpc_flowlogs_bucket_name = ""
+  # The region where the vpc flow log bucket exists
+  vpc_flowlogs_bucket_region = ""
 
 }
 
@@ -97,13 +102,16 @@ output "aws_parameters" {
 | Name                           | Description                                                            | Type     | Default             | Required |
 | -------------------------------- | ------------------------------------------------------------------------ | ---------- | --------------------- | ---------- |
 | integration_name               | Prefix to be used for naming new resources                             | `string` | `UptycsIntegration` |          |
-| upt_account_id                 | Uptycs AWS account ID                                                  | `string` | `""`                | Yes      |
+| upt_account_id                 | Uptycs Account ID                                                      | `string` | `""`                | Yes      |
 | aws_account_id                 | AWS organization's master account ID                                   | `string` | `""`                | Yes      |
 | external_id                    | External ID                                                            | `uuid4`  | `""`                | Yes      |
 | vpc_flowlogs_bucket_name       | Name of the S3 bucket in master for VPC flow logs                      | `string` | `""`                | Optional |
+| vpc_flowlogs_bucket_region     | The region where the vpc flow logs bucket exists                       | `string` | `""`                | Optional |
 | cloudtrail_s3_bucket_name      | Name of the organization cloud trail S3 bucket                         | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_region    | The region where the cloudtrail bucket exists                          | `string` | `""`                | Optional |
 | cloudtrail_s3_bucket_in_master | Specifies whether the cloudtrail s3 bucket is in master account or not | `bool`   | `true`              |          |
 | kinesis_stream_name            | Name of the organization Kinesis stream                                | `string` | `""`                | Optional |
+| kinesis_stream_region          | The region where the kinesis stream exists                             | `string` | `""`                | Optional |
 
 ### Execute Terraform script
 
