@@ -64,7 +64,8 @@ resource "aws_iam_role" "role" {
             "servicecatalog:SearchProductsAsAdmin",
             "sns:GetSubscriptionAttributes",
             "sqs:GetQueueUrl",
-            "ssm:ListCommandInvocations"
+            "ssm:ListCommandInvocations",
+            "ce:GetCostAndUsage
           ]
           Effect   = "Allow"
           Resource = "*"
