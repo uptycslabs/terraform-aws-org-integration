@@ -65,7 +65,8 @@ resource "aws_iam_role" "role" {
             "sns:GetSubscriptionAttributes",
             "sqs:GetQueueUrl",
             "ssm:ListCommandInvocations",
-            "ce:GetCostAndUsage
+            "ce:GetCostAndUsage",
+            "redshift-serverless:List*"
           ]
           Effect   = "Allow"
           Resource = "*"
