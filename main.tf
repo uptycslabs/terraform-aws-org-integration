@@ -9,7 +9,7 @@ data "aws_s3_bucket" "cloudtrail_log_bucket_arn" {
 }
 
 data "aws_kinesis_stream" "kinesis_stream_arn" {
-  count =  var.kinesis_stream_name != "" ? 1 : 0
+  count = var.kinesis_stream_name != "" ? 1 : 0
   name  = var.kinesis_stream_name
 }
 
@@ -17,62 +17,74 @@ locals {
   cloudtrail_log_bucket_arn = (var.cloudtrail_s3_bucket_in_master && var.cloudtrail_s3_bucket_name != "") ? data.aws_s3_bucket.cloudtrail_log_bucket_arn[0].arn : null
   vpc_log_bucket_arn        = var.vpc_flowlogs_bucket_name != "" ? data.aws_s3_bucket.vpc_log_bucket_arn[0].arn : null
   kinesis_stream_arn        = var.kinesis_stream_name != "" ? data.aws_kinesis_stream.kinesis_stream_arn[0].arn : null
+  actions = [
+    "apigateway:GET",
+    "codecommit:GetCommit",
+    "codepipeline:ListTagsForResource",
+    "ds:ListTagsForResource",
+    "ec2:SearchTransitGatewayRoutes",
+    "eks:DescribeAddon",
+    "eks:DescribeFargateProfile",
+    "eks:DescribeIdentityProviderConfig",
+    "eks:DescribeNodegroup",
+    "eks:DescribeUpdate",
+    "eks:ListAddons",
+    "eks:ListFargateProfiles",
+    "eks:ListIdentityProviderConfigs",
+    "eks:ListNodegroups",
+    "eks:ListTagsForResource",
+    "eks:ListUpdates",
+    "elasticfilesystem:DescribeFileSystemPolicy",
+    "glacier:DescribeJob",
+    "glacier:GetDataRetrievalPolicy",
+    "glacier:GetJobOutput",
+    "glacier:GetVaultNotifications",
+    "glacier:ListJobs",
+    "glacier:ListTagsForVault",
+    "logs:FilterLogEvents",
+    "ram:GetResourceShares",
+    "ram:ListResources",
+    "s3:GetIntelligentTieringConfiguration",
+    "servicecatalog:DescribePortfolio",
+    "servicecatalog:DescribeProductAsAdmin",
+    "servicecatalog:DescribeProvisioningArtifact",
+    "servicecatalog:DescribeServiceAction",
+    "servicecatalog:SearchProductsAsAdmin",
+    "sns:GetSubscriptionAttributes",
+    "ssm:ListCommandInvocations",
+    "ce:GetCostAndUsage",
+    "redshift-serverless:List*"
+  ]
+  child_policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = local.actions
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+  master_actions = concat(local.actions, ["sqs:GetQueueUrl"])
+  master_policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = local.master_actions
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+
 }
 resource "aws_iam_role" "role" {
   name = var.integration_name
 
   path = "/"
   inline_policy {
-    name = "UptycsReadOnlyPolicy"
-
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "apigateway:GET",
-            "codecommit:GetCommit",
-            "codepipeline:ListTagsForResource",
-            "ds:ListTagsForResource",
-            "ec2:SearchTransitGatewayRoutes",
-            "eks:DescribeAddon",
-            "eks:DescribeFargateProfile",
-            "eks:DescribeIdentityProviderConfig",
-            "eks:DescribeNodegroup",
-            "eks:DescribeUpdate",
-            "eks:ListAddons",
-            "eks:ListFargateProfiles",
-            "eks:ListIdentityProviderConfigs",
-            "eks:ListNodegroups",
-            "eks:ListTagsForResource",
-            "eks:ListUpdates",
-            "elasticfilesystem:DescribeFileSystemPolicy",
-            "glacier:DescribeJob",
-            "glacier:GetDataRetrievalPolicy",
-            "glacier:GetJobOutput",
-            "glacier:GetVaultNotifications",
-            "glacier:ListJobs",
-            "glacier:ListTagsForVault",
-            "logs:FilterLogEvents",
-            "ram:GetResourceShares",
-            "ram:ListResources",
-            "s3:GetIntelligentTieringConfiguration",
-            "servicecatalog:DescribePortfolio",
-            "servicecatalog:DescribeProductAsAdmin",
-            "servicecatalog:DescribeProvisioningArtifact",
-            "servicecatalog:DescribeServiceAction",
-            "servicecatalog:SearchProductsAsAdmin",
-            "sns:GetSubscriptionAttributes",
-            "sqs:GetQueueUrl",
-            "ssm:ListCommandInvocations",
-            "ce:GetCostAndUsage",
-            "redshift-serverless:List*"
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        },
-      ]
-    })
+    name   = "UptycsReadOnlyPolicy"
+    policy = local.master_policy_document
   }
   assume_role_policy = <<EOF
 {

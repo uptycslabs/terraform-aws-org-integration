@@ -74,8 +74,13 @@ module "org-config" {
   cloudtrail_s3_bucket_in_master = true
 
   # Provide the S3 bucket name which contains the CloudTrail data
-  # Ignore this field in case the CloudTrail S3 bucket is in a child account
   cloudtrail_s3_bucket_name = ""
+
+ # Provide the accountId where the cloudrail bucket exists
+ # Provide the S3 bucket's region
+ # Ignore If cloudtrail bucket is in master account
+ cloudtrail_s3_bucket_account = ""
+ cloudtrail_s3_bucket_region = ""
 
   # Name of the Kinesis stream configured to stream CloudTrail data
   kinesis_stream_name = ""
@@ -95,15 +100,17 @@ output "aws_parameters" {
 
 
 | Name                           | Description                                                            | Type     | Default             | Required |
-| -------------------------------- | ------------------------------------------------------------------------ | ---------- | --------------------- | ---------- |
+| :------------------------------- | ------------------------------------------------------------------------ | ---------- | --------------------- | ---------- |
 | integration_name               | Prefix to be used for naming new resources                             | `string` | `UptycsIntegration` |          |
 | upt_account_id                 | Uptycs AWS account ID                                                  | `string` | `""`                | Yes      |
 | aws_account_id                 | AWS organization's master account ID                                   | `string` | `""`                | Yes      |
 | external_id                    | External ID                                                            | `uuid4`  | `""`                | Yes      |
 | vpc_flowlogs_bucket_name       | Name of the S3 bucket in master for VPC flow logs                      | `string` | `""`                | Optional |
-| cloudtrail_s3_bucket_name      | Name of the organization cloud trail S3 bucket                         | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_name      | Name of the organization's cloud trail S3 bucket                       | `string` | `""`                | Optional |
 | cloudtrail_s3_bucket_in_master | Specifies whether the cloudtrail s3 bucket is in master account or not | `bool`   | `true`              |          |
-| kinesis_stream_name            | Name of the organization Kinesis stream                                | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_account   | Child Account id in which the cloudtrail S3 bucket exists              | `string` | `""`                | Optional |
+| cloudtrail_s3_bucket_region    | Region where CloudTrail bucket exists                                  | `string` | `""`                | Optional |
+| kinesis_stream_name            | Name of the organization's Kinesis stream                                | `string` | `""`                | Optional |
 
 ### Execute Terraform script
 

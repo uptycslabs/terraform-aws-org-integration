@@ -13,6 +13,9 @@ resource "uptycscspm_role" "child_account_role" {
   upt_account_id   = var.upt_account_id
   external_id      = var.external_id
   profile_name     = data.external.env.result["aws_profile"]
+  policy_document  = local.child_policy_document
+  bucket_name      = (!var.cloudtrail_s3_bucket_in_master && each.key == var.cloudtrail_s3_bucket_account) ? var.cloudtrail_s3_bucket_name : ""
+  bucket_region    = (!var.cloudtrail_s3_bucket_in_master && each.key == var.cloudtrail_s3_bucket_account) ? var.cloudtrail_s3_bucket_region : ""
 
   lifecycle {
     replace_triggered_by = [
