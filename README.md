@@ -100,7 +100,7 @@ output "aws_parameters" {
 
 
 | Name                           | Description                                                            | Type     | Default             | Required |
-| :------------------------------- | ------------------------------------------------------------------------ | ---------- | --------------------- | ---------- |
+| ------------------------------- | ------------------------------------------------------------------------ | ---------- | --------------------- | ---------- |
 | integration_name               | Prefix to be used for naming new resources                             | `string` | `UptycsIntegration` |          |
 | upt_account_id                 | Uptycs AWS account ID                                                  | `string` | `""`                | Yes      |
 | aws_account_id                 | AWS organization's master account ID                                   | `string` | `""`                | Yes      |
