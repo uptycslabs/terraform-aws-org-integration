@@ -31,6 +31,18 @@ variable "cloudtrail_s3_bucket_name" {
   default     = ""
 }
 
+variable "cloudtrail_s3_bucket_region" {
+  type        = string
+  description = "Region where CloudTrail bucket exists"
+  default     = ""
+}
+
+variable "cloudtrail_s3_bucket_account" {
+  type        = string
+  description = "Child Account id in which the cloudtrail S3 bucket exists"
+  default     = ""
+}
+
 variable "cloudtrail_s3_bucket_in_master" {
   description = "Specifies whether cloudtrail s3 bucket is in master account or not"
   type        = string
