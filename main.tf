@@ -54,8 +54,8 @@ locals {
     "ssm:ListCommandInvocations",
     "ce:GetCostAndUsage",
     "redshift-serverless:List*",
-    "lambda:GetCodeSigningConfig",
-		"lambda:GetFunctionCodeSigningConfig"
+    "lambda:GetCodeSigningConfig",    
+    "lambda:GetFunctionCodeSigningConfig"
   ]
   child_policy_document = jsonencode({
     Version = "2012-10-17"

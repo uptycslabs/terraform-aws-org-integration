@@ -44,7 +44,7 @@ const ReadOnlyPolicy = `{
               "ce:GetCostAndUsage",
               "redshift-serverless:List*",
               "lambda:GetCodeSigningConfig",
-			  "lambda:GetFunctionCodeSigningConfig"
+              "lambda:GetFunctionCodeSigningConfig"
             ],
             "Resource": "*"
         }
