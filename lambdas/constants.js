@@ -42,7 +42,9 @@ const ReadOnlyPolicy = `{
               "sns:GetSubscriptionAttributes",
               "ssm:ListCommandInvocations",
               "ce:GetCostAndUsage",
-              "redshift-serverless:List*"
+              "redshift-serverless:List*",
+              "lambda:GetCodeSigningConfig",
+              "lambda:GetFunctionCodeSigningConfig"
             ],
             "Resource": "*"
         }
