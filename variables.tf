@@ -1,69 +1,29 @@
-variable "integration_name" {
-  description = "Prefix to be used for naming new resources"
+variable "external_id" {
   type        = string
-  default     = "UptycsIntegration"
+  default     = "f0611dec-83e4-4296-a7a5-92255a733ea3"
+  description = "The ExternalId used by Uptycs to Assume this role"
 }
 
-variable "aws_account_id" {
-  description = "AWS organization's master account ID"
+variable "integration_name" {
   type        = string
+  default     = "uptycs-OrgIntegration"
+  description = "The IAM role that will be created with a trust relationship with Uptycs"
 }
 
 variable "upt_account_id" {
-  description = "Uptycs AWS account ID"
   type        = string
+  default     = "685272795239"
+  description = "The Uptycs Account from which the role is assumed"
 }
 
-variable "external_id" {
-  description = "Role external ID provided by Uptycs"
+variable "permissions_boundary" {
   type        = string
-}
+  default     = null
+  description = "The name of the permissions boundary to apply to IAM roles"
 
-variable "vpc_flowlogs_bucket_name" {
-  type        = string
-  description = "S3 bucket where VPC flow logs are saved. Required, if customer wants to attach bucket for VPC flow logs ."
-  default     = ""
-}
-
-variable "cloudtrail_s3_bucket_name" {
-  type        = string
-  description = "S3 bucket where CloudTrail is saved. Required, if customer wants to attach cloudtrail bucket for cloudtrail logs."
-  default     = ""
-}
-
-variable "cloudtrail_s3_bucket_region" {
-  type        = string
-  description = "Region where CloudTrail bucket exists"
-  default     = ""
-}
-
-variable "cloudtrail_s3_bucket_account" {
-  type        = string
-  description = "Child Account id in which the cloudtrail S3 bucket exists"
-  default     = ""
-}
-
-variable "cloudtrail_s3_bucket_in_master" {
-  description = "Specifies whether cloudtrail s3 bucket is in master account or not"
-  type        = string
-  default     = true
-}
-
-
-variable "kinesis_stream_name" {
-  description = "Kinesis stream name for cloudtrail logs. Required, if customer wants to attach kinesis stream for cloudtrail logs."
-  type        = string
-  default     = ""
 }
 
 variable "tags" {
-  description = "Tags to apply to the resources created by this module"
-  type        = map(string)
-  default     = {}
-}
-
-variable "defer_role_creation" {
-  description = "Defer role creation to Lambda function so it can triggered on-demand"
-  type        = bool
-  default     = true
+  type    = map(string)
+  default = {}
 }
