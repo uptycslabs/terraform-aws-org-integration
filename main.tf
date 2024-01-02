@@ -1,6 +1,6 @@
 resource "aws_cloudformation_stack" "integration" {
   name         = "${var.integration_name}-Uptycs-Stack"
-  template_url = "https://llrcftesttemp1.s3.amazonaws.com/uptycs-org-cspm-master-146-2.yml"
+  template_url = "https://uptycs-integration.s3.amazonaws.com/aws/org/cf-templates/uptycs-org-cspm-master-147.yml"
   capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
   parameters = {
     ExternalId          = var.external_id
