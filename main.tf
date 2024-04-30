@@ -55,7 +55,12 @@ locals {
     "ce:GetCostAndUsage",
     "redshift-serverless:List*",
     "lambda:GetCodeSigningConfig",    
-    "lambda:GetFunctionCodeSigningConfig"
+    "lambda:GetFunctionCodeSigningConfig",
+    "bedrock:List*",
+    "bedrock:Get*",
+    "aoss:List*",
+    "aoss:Get*",
+    "aoss:BatchGet*"
   ]
   child_policy_document = jsonencode({
     Version = "2012-10-17"
