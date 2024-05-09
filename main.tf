@@ -18,7 +18,13 @@ locals {
   vpc_log_bucket_arn        = var.vpc_flowlogs_bucket_name != "" ? data.aws_s3_bucket.vpc_log_bucket_arn[0].arn : null
   kinesis_stream_arn        = var.kinesis_stream_name != "" ? data.aws_kinesis_stream.kinesis_stream_arn[0].arn : null
   actions = [
+    "aoss:BatchGet*",
+    "aoss:Get*",
+    "aoss:List*",
     "apigateway:GET",
+    "bedrock:Get*",
+    "bedrock:List*",
+    "ce:GetCostAndUsage",
     "codecommit:GetCommit",
     "codepipeline:ListTagsForResource",
     "ds:ListTagsForResource",
@@ -41,9 +47,12 @@ locals {
     "glacier:GetVaultNotifications",
     "glacier:ListJobs",
     "glacier:ListTagsForVault",
+    "lambda:GetCodeSigningConfig",
+    "lambda:GetFunctionCodeSigningConfig",
     "logs:FilterLogEvents",
     "ram:GetResourceShares",
     "ram:ListResources",
+    "redshift-serverless:List*",
     "s3:GetIntelligentTieringConfiguration",
     "servicecatalog:DescribePortfolio",
     "servicecatalog:DescribeProductAsAdmin",
@@ -51,11 +60,7 @@ locals {
     "servicecatalog:DescribeServiceAction",
     "servicecatalog:SearchProductsAsAdmin",
     "sns:GetSubscriptionAttributes",
-    "ssm:ListCommandInvocations",
-    "ce:GetCostAndUsage",
-    "redshift-serverless:List*",
-    "lambda:GetCodeSigningConfig",    
-    "lambda:GetFunctionCodeSigningConfig"
+    "ssm:ListCommandInvocations"
   ]
   child_policy_document = jsonencode({
     Version = "2012-10-17"
