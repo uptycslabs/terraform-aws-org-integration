@@ -17,6 +17,8 @@ const ReadOnlyPolicy = `{
               "codecommit:GetCommit",
               "codepipeline:ListTagsForResource",
               "ds:ListTagsForResource",
+              "docdb-elastic:Get*",
+              "docdb-elastic:List*",
               "ec2:SearchTransitGatewayRoutes",
               "eks:DescribeAddon",
               "eks:DescribeFargateProfile",
