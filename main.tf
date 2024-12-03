@@ -65,7 +65,11 @@ locals {
     "servicecatalog:DescribeServiceAction",
     "servicecatalog:SearchProductsAsAdmin",
     "sns:GetSubscriptionAttributes",
-    "ssm:ListCommandInvocations"
+    "ssm:ListCommandInvocations",
+    "ssm:ListCommandInvocations",
+    "sso:List*",
+    "sso:Describe*",
+    "sso:Get*"
   ]
   child_policy_document = jsonencode({
     Version = "2012-10-17"
