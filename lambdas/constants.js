@@ -55,6 +55,10 @@ const ReadOnlyPolicy = `{
               "servicecatalog:SearchProductsAsAdmin",
               "sns:GetSubscriptionAttributes",
               "ssm:ListCommandInvocations",
+              "ssm:ListCommandInvocations",
+              "sso:List*",
+              "sso:Describe*",
+              "sso:Get*"
             ],
             "Resource": "*"
         }
