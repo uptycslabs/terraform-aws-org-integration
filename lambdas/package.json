@@ -9,8 +9,8 @@
   "author": "Gopal B",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-iam": "^3.218.0",
-    "@aws-sdk/client-sqs": "^3.218.0",
-    "@aws-sdk/client-sts": "^3.218.0"
+    "@aws-sdk/client-iam": "^3.350.0",
+    "@aws-sdk/client-sqs": "^3.350.0",
+    "@aws-sdk/client-sts": "^3.350.0"
   }
 }
